@@ -30,35 +30,32 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import Foundation
+import SwiftUI
 
-extension Date {
-  /// Format a date using the specified format.
-  ///   - parameters:
-  ///     - format: A date pattern string like "MM dd".
-  func formatted(as format: String) -> String {
-    let dateFormatter = DateFormatter()
-    dateFormatter.locale = .init(identifier: "ko")
-    dateFormatter.dateFormat = format
-    return dateFormatter.string(from: self)
-  }
+struct HeaderView: View {
+    let titleText: String
+    var body: some View {
+        VStack {
+            Text(titleText)
+                .font(.largeTitle)
+                .lineLimit(1)
+            HStack {
+                Image(systemName: "hand.wave").foregroundColor(Color.black)
+                Image(systemName: "1.circle.fill").foregroundColor(Color.red)
+                Image(systemName: "2.circle.fill").foregroundColor(Color.blue)
+                Image(systemName: "3.circle.fill").foregroundColor(Color.purple)
+                Image(systemName: "4.circle.fill").foregroundColor(Color.yellow)
+            }
+            .font(.title)
+        }
+    }
+}
 
-  var yearMonthDay: String {
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "yyyy MM dd"
-    return dateFormatter.string(from: self)
-  }
-
-  /// Check another date is the same year, month and day.
-  ///   - parameters:
-  ///     - day: The other date.
-  func isSameDay(as day: Date) -> Bool {
-    return self.yearMonthDay == day.yearMonthDay
-  }
-
-  var dayName: String {
-    let dateFormatter = DateFormatter()
-    dateFormatter.dateFormat = "EEEE"
-    return dateFormatter.string(from: self)
-  }
+struct HeaderView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            HeaderView(titleText: "Squat")
+                .previewLayout(.sizeThatFits)
+        }
+    }
 }

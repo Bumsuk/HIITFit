@@ -32,11 +32,89 @@
 
 import SwiftUI
 
+// MARK: - CheckVersion
+
 @main
-struct HIITFitApp: App {
-  var body: some Scene {
-    WindowGroup {
-      ContentView()
+struct CheckVersion {
+    static func main() {
+        if #available(iOS 14.0, *) {
+            HIITFitApp.main()
+        } else {
+            UIApplicationMain(CommandLine.argc,
+                              CommandLine.unsafeArgv,
+                              nil,
+                              NSStringFromClass(AppDelegate.self))
+        }
     }
-  }
 }
+
+// MARK: - iOS 14+ Only
+
+@available(iOS 14.0, *)
+struct HIITFitApp: App {
+    @Environment(\.scenePhase) var scenePhase
+
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+            // ScrollViewTest()
+        }
+        .onChange(of: scenePhase) { newScenePhase in
+            switch newScenePhase {
+            case .active:
+                print("App is active")
+            case .inactive:
+                print("App is inactive")
+            case .background:
+                print("App is in background")
+            @unknown default:
+                print("Interesting: Unexpected new value.")
+            }
+        }
+    }
+}
+
+// MARK: - iOS 13 Below Only
+
+//@UIApplicationMain (xcode 11)
+//@main (xcode 12)
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    func applicationDidFinishLaunching(_ application: UIApplication) {
+        print("🔥", #function)
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        print("🔥", #function)
+    }
+    
+    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        // Called when a new scene session is being created.
+        // Use this method to select a configuration to create the new scene with.
+        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+    }
+    
+    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
+    }
+}
+
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    var window: UIWindow?
+    
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        let contentView = ContentView()
+        
+        if let windowScene = scene as? UIWindowScene {
+            let window = UIWindow(windowScene: windowScene)
+            window.rootViewController = UIHostingController(rootView: contentView)
+            self.window = window
+            window.makeKeyAndVisible()
+        }
+    }
+    
+    func sceneDidDisconnect(_ scene: UIScene) {}
+    func sceneDidBecomeActive(_ scene: UIScene) {}
+    func sceneWillResignActive(_ scene: UIScene) {}
+    func sceneWillEnterForeground(_ scene: UIScene) {}
+    func sceneDidEnterBackground(_ scene: UIScene) {}
+}
+
