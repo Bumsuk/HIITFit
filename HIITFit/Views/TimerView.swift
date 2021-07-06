@@ -31,59 +31,33 @@
 /// THE SOFTWARE.
 
 import SwiftUI
+import Combine
 
-struct HistoryView: View {
-    @EnvironmentObject var history: HistoryStore
-    @Environment(\.presentationMode) var presentaionMode
-
+struct TimerView: View {
+    @State private var timeRemaining = 3
+    @State var cancellable = Set<AnyCancellable>()
+    @Binding var timerDone: Bool
+    let timer = Timer.publish(every: 1,
+                              on: .main,
+                              in: .common).autoconnect()
+    
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            
-            // 메인 컨트롤들
-            VStack {
-                Text("History").padding()
-                
-                ZStack {
-                    Form {
-                        ForEach(history.exerciseDays) { day in
-                            Section(header: Text(day.date.formatted(as: "MM월 dd일"))) {
-                                ForEach(day.exercises, id: \.self) { exercise in
-                                    Text(exercise)
-                                }
-                            }
-                        }
-                    }
-                    
-                    if history.exerciseDays.count == 0 {
-                        Text("운동 이력이 없습니다.")
-                            .font(.largeTitle)
-                            .foregroundColor(Color.gray)
-                    }
+        Text("\(timeRemaining)")
+            .font(.system(size: 90, weight: .black, design: .rounded))
+            .padding()
+            .onReceive(timer, perform: { _ in
+                if timeRemaining > 0 {
+                    timeRemaining -= 1
+                } else {
+                    timerDone = true
                 }
-
-            }
-            
-            // 닫기 버튼
-            Button(action: {
-                presentaionMode.wrappedValue.dismiss()
-            }) {
-                Image(systemName: "xmark.circle")
-            }
-            .font(.custom("", size: 20))
-            .padding([.top, .trailing], 10)
-            //.disabled(true)
-        }
+            })
     }
 }
 
-struct HistoryView_Previews: PreviewProvider {
+struct TimerView_Previews: PreviewProvider {
     static var previews: some View {
-        HistoryView()
-            .environmentObject(HistoryStore())
-            //.previewDevice("iPhone 8")
-            //.previewLayout(.fixed(width: 812, height: 375)) // 1
-            //.environment(\.horizontalSizeClass, .compact)
-            //.environment(\.verticalSizeClass, .compact)
+        TimerView(timerDone: .constant(false))
             .previewLayout(.sizeThatFits)
     }
 }

@@ -32,18 +32,90 @@
 
 import Foundation
 
+enum FileError: Error {
+    case loadFailure
+    case saveFailure
+    case urlFailure
+}
+
 struct ExerciseDay: Identifiable {
     var id: UUID = .init()
     let date: Date
     var exercises: [String] = []
 }
 
-struct HistoryStore {
-    var exerciseDays: [ExerciseDay] = []
+class HistoryStore: ObservableObject {
+    @Published var exerciseDays: [ExerciseDay] = []
 
-    #if DEBUG
-    init() {
-        createDevData()
+    init() {}
+    
+    init(withChecking: Bool) throws {
+        // createDevData()
+        do {
+            try load()
+        } catch {
+            throw error
+        }
     }
-    #endif
+    
+    func load() throws {
+        guard let dataURL = getURL() else {
+            throw FileError.urlFailure
+        }
+        guard let data = try? Data(contentsOf: dataURL) else {
+            return
+        }
+        let plistData = try PropertyListSerialization.propertyList(
+            from: data,
+            options: [],
+            format: nil)
+        let convertedPlistData = plistData as? [[Any]] ?? []
+        exerciseDays = convertedPlistData.map {
+            ExerciseDay(
+                date: $0[1] as? Date ?? Date(),
+                exercises: $0[2] as? [String] ?? [])
+        }
+    }
+    
+    func getURL() -> URL? {
+        guard let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return nil
+        }
+        return documentsURL.appendingPathComponent("history.plist")
+    }
+    
+    func save() throws {
+        guard let dataURL = getURL() else {
+            throw FileError.urlFailure
+        }
+        let plistData = exerciseDays.map { day in
+            [day.id.uuidString, day.date, day.exercises]
+        }
+        
+        do {
+            let data = try PropertyListSerialization.data(fromPropertyList: plistData, format: .binary, options: .zero)
+            try data.write(to: dataURL, options: .atomic)
+        } catch {
+            throw FileError.saveFailure
+        }
+        
+    }
+    
+    func addDoneExercise(_ exerciseName: String) {
+        let today = Date()
+        if let firstDate = exerciseDays.first?.date,
+           today.isSameDay(as: firstDate) {
+            exerciseDays[0].exercises.append(exerciseName)
+        } else {
+            exerciseDays.insert(
+                ExerciseDay(date: today, exercises: [exerciseName]),
+                at: 0)
+        }
+        do {
+            try save()
+        } catch {
+            fatalError(error.localizedDescription)
+        }
+    }
+    
 }

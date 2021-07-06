@@ -31,30 +31,37 @@
 /// THE SOFTWARE.
 
 import SwiftUI
+import Combine
 
 struct WelcomeView: View {
-    @State var presentingModal = false
+    @EnvironmentObject var share: ShareData
+    @State var showHistory = false
+    @Binding var selectedTab: Int
 
     var body: some View {
         ZStack {
             VStack {
-                HeaderView(titleText: "Welcome").padding([.all], 20)
+                HeaderView(titleText: NSLocalizedString("Welcome", comment: "greeting"), selectedTab: $selectedTab)
+                    .padding([.all], 20)
+                
                 Spacer()
+                
                 Button("History") {
-                    self.presentingModal.toggle()
+                    self.showHistory.toggle()
                 }
-                .sheet(isPresented: $presentingModal, onDismiss: {
+                .sheet(isPresented: $showHistory, onDismiss: {
                     print("onDismiss 호출!!")
                 }, content: {
                     HistoryView()
                 })
+                //.frame(width: 400, height: 400, alignment: .bottom)
                 .padding(.bottom)
             }
 
             VStack {
                 HStack(alignment: .bottom) {
                     VStack(alignment: .leading) {
-                        Text("Get fit").font(.largeTitle)
+                        Text(NSLocalizedString("Get Fit", comment: "")).font(.largeTitle)
                         Text("with high intensity interval training").font(.headline)
                     }
                     Image("step-up")
@@ -63,8 +70,10 @@ struct WelcomeView: View {
                 }
                 .padding([.leading, .trailing], 20)
 
-                Button(action: {}, label: {
-                    Text("Get Started")
+                Button(action: {
+                    selectedTab = 0
+                }, label: {
+                    Text(NSLocalizedString("Get Started", comment: ""))
                     Image(systemName: "arrow.right.circle")
                 })
                 .padding()
@@ -75,7 +84,8 @@ struct WelcomeView: View {
 
 struct WelcomeView_Previews: PreviewProvider {
     static var previews: some View {
-        WelcomeView()
+        WelcomeView(selectedTab: .constant(1))
+            .environmentObject(ShareData())
             //.preferredColorScheme(.dark)
 
         // .previewDevice("iPad Pro (11-inch) (3rd generation)")

@@ -34,13 +34,20 @@ import AVKit
 import SwiftUI
 
 struct ExerciseView: View {
+    @EnvironmentObject var history: HistoryStore
+    @State private var showHistory = false
+    @State private var showSuccess = false
+    @State private var timerDone = false
+    @State private var showTimer = false
+    
+    @Binding var selectedTab: Int
+
     let index: Int
-    let interval: TimeInterval = 30
 
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                HeaderView(titleText: Exercise.exercises[index].exerciseName)
+                HeaderView(titleText: Exercise.exercises[index].exerciseName, selectedTab: $selectedTab)
                     .padding([.all], 20)
 
                 VStack {
@@ -55,25 +62,64 @@ struct ExerciseView: View {
                 .frame(width: geometry.size.width,
                        height: geometry.size.height * 0.45,
                        alignment: .center)
-                Text(Date().addingTimeInterval(interval), style: .timer)
-                    .font(.system(size: 90))
-
-                Button("시작/완료", action: {
-                    print("눌림!")
-                })
-                    .font(.headline)
-                    .padding()
-                RatingView().padding()
+                
+                HStack(spacing: 150) {
+                    Button("Start Exercise") {
+                        timerDone = false
+                        showTimer.toggle()
+                    }
+                    
+                    Button("Done") {
+                        history.addDoneExercise(Exercise.exercises[index].exerciseName)
+                        
+                        timerDone = false
+                        showTimer.toggle()
+                        
+                        if lastExercise {
+                            showSuccess.toggle()
+                        } else {
+                            selectedTab += 1
+                        }
+                    }
+                    .disabled(!timerDone)
+                    .sheet(isPresented: $showSuccess, content: {
+                        SuccessView(selectedTab: $selectedTab)
+                    })
+                }
+                .font(.headline)
+                .padding()
+                
+                if showTimer {
+                    TimerView(timerDone: $timerDone)
+                }
+                
                 Spacer()
-                Text("History button")
+                
+                RatingView(exerciseIndex: index)
+                    .padding()
+                                
+                Button("History") {
+                    showHistory.toggle()
+                }
+                .sheet(isPresented: $showHistory) {
+                    HistoryView()
+                }
+                .padding(.bottom)
             }
         }
     }
 }
 
+extension ExerciseView {
+    var lastExercise: Bool {
+        index + 1 == Exercise.exercises.count ? true : false
+    }
+}
+
 struct ExerciseView_Previews: PreviewProvider {
     static var previews: some View {
-        ExerciseView(index: 0)
+        ExerciseView(selectedTab: .constant(3), index: 3)
+            .environmentObject(HistoryStore())
             // .previewDevice("iPhone 12 Pro Max")
             .previewLayout(.sizeThatFits)
     }

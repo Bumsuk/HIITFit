@@ -32,28 +32,15 @@
 
 import SwiftUI
 
-struct CellData: Identifiable {
-    var id: UUID = .init()
-    var name: String
-    
-    static let datas: [CellData] = [
-        .init(name: "aaa"),
-        .init(name: "aab"),
-        .init(name: "aac"),
-        .init(name: "aad"),
-    ]
-}
-
-struct Cell: View {
-    var body: some View {
-        HStack {
-            Image(systemName: "pencil.circle.fill")
-            Text("하하")
-        }
-    }
-}
-
 struct SuccessView: View {
+    @Binding var selectedTab: Int
+
+    @Environment(\.presentationMode) var presentationMode
+    @Environment(\.locale) var locale
+    @Environment(\.allowsTightening) var allowsTightening
+    @Environment(\.layoutDirection) var layoutDirection
+    @Environment(\.pixelLength) var pixelLength
+
     var body: some View {
         ZStack {
             VStack {
@@ -69,19 +56,27 @@ struct SuccessView: View {
                     .multilineTextAlignment(.center)
                     .foregroundColor(.gray)
             }
-            
+
             VStack {
                 Spacer()
-                Button("Continue") {}
-                    .padding()
+                Button("Continue") {
+                    print(layoutDirection)
+                    selectedTab = 9
+                    presentationMode.wrappedValue.dismiss()
+                }
+                .padding()
             }
         }
+        .onAppear(perform: {
+            print("locale: \(locale)")
+            print("pixelLength: \(pixelLength)")
+        })
     }
 }
 
 struct SuccessView_Previews: PreviewProvider {
     static var previews: some View {
-        SuccessView()
+        SuccessView(selectedTab: .constant(2))
         // .previewLayout(.fixed(width: 300, height: 100))
     }
 }

@@ -31,17 +31,41 @@
 /// THE SOFTWARE.
 
 import SwiftUI
+import Combine
 
 struct ContentView: View {
+    @EnvironmentObject private var share: ShareData
+    @State private var cancellable = Set<AnyCancellable>()
+    @SceneStorage("selectedTab") private var selectedTab = 9
+
     var body: some View {
         GeometryReader { geometry in
-            TabView {
-                WelcomeView()
+            TabView(selection: $selectedTab) {
+                WelcomeView(selectedTab: $selectedTab)
+                    .tag(9)
+                
                 ForEach(0..<Exercise.exercises.count) { index in
-                    ExerciseView(index: index)
+                    ExerciseView(selectedTab: $selectedTab, index: index)
+                        .tag(index)
                 }
             }
+            //.environmentObject(HistoryStore()) //! 객체 주입(비슷)
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            .onAppear(perform: {
+                print("[onAppear]]")
+                
+                share.$val1.sink { str in
+                    print("[val1] \(str)")
+                }.store(in: &cancellable)
+                
+                share.val2.sink { str in
+                    print("[val2] \(str)")
+                }.store(in: &cancellable)
+                
+                share.val3.sink { str in
+                    print("[val3] \(str)")
+                }.store(in: &cancellable)
+            })
         }
         .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
     }
@@ -51,6 +75,7 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             ContentView()
+                .environmentObject(ShareData())
                 .preferredColorScheme(.light)
                 //.previewDevice("iPhone 11")
         }
