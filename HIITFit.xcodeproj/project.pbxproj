@@ -18,6 +18,8 @@
 		C08D9A9A26929A1F00AB5525 /* ExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C08D9A9926929A1F00AB5525 /* ExerciseView.swift */; };
 		C08D9A9D2692AA3700AB5525 /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C08D9A9C2692AA3700AB5525 /* HeaderView.swift */; };
 		C09479B9269587D400DB1B33 /* TimerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09479B8269587D300DB1B33 /* TimerView.swift */; };
+		C0A0D7E42696F21D003ECB0D /* RaisedButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A0D7E32696F21D003ECB0D /* RaisedButton.swift */; };
+		C0A0D7E62696F52B003ECB0D /* TextExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0A0D7E52696F52A003ECB0D /* TextExtension.swift */; };
 		C0B2D7442693F4D1008FC894 /* HistoryStoreDevData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B2D7432693F4D1008FC894 /* HistoryStoreDevData.swift */; };
 		C0B2D769269410A2008FC894 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C0B2D76B269410A2008FC894 /* Localizable.strings */; };
 		C0B2D76F26941687008FC894 /* burpee.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = C0B2D77126941687008FC894 /* burpee.mp4 */; };
@@ -46,6 +48,8 @@
 		C08D9A9C2692AA3700AB5525 /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		C09479B8269587D300DB1B33 /* TimerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerView.swift; sourceTree = "<group>"; };
 		C09A15752696982300703C9E /* HIITFit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HIITFit.entitlements; sourceTree = "<group>"; };
+		C0A0D7E32696F21D003ECB0D /* RaisedButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaisedButton.swift; sourceTree = "<group>"; };
+		C0A0D7E52696F52A003ECB0D /* TextExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextExtension.swift; sourceTree = "<group>"; };
 		C0B2D7432693F4D1008FC894 /* HistoryStoreDevData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStoreDevData.swift; sourceTree = "<group>"; };
 		C0B2D76A269410A2008FC894 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C0B2D76E26941573008FC894 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -94,6 +98,7 @@
 		C08D9A9B26929A3000AB5525 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C0A0D7E02696F207003ECB0D /* Buttons */,
 				CD30C925251474DC0049DB93 /* ContentView.swift */,
 				C08D9A9726929A0C00AB5525 /* WelcomeView.swift */,
 				C08D9A9C2692AA3700AB5525 /* HeaderView.swift */,
@@ -106,9 +111,18 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		C0A0D7E02696F207003ECB0D /* Buttons */ = {
+			isa = PBXGroup;
+			children = (
+				C0A0D7E32696F21D003ECB0D /* RaisedButton.swift */,
+			);
+			path = Buttons;
+			sourceTree = "<group>";
+		};
 		C0B2D76D26941213008FC894 /* Extenstions */ = {
 			isa = PBXGroup;
 			children = (
+				C0A0D7E52696F52A003ECB0D /* TextExtension.swift */,
 				CD30C93D25147A8C0049DB93 /* DateExtension.swift */,
 				CD30C93E25147A8C0049DB93 /* ImageExtension.swift */,
 			);
@@ -272,6 +286,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C09479B9269587D400DB1B33 /* TimerView.swift in Sources */,
+				C0A0D7E42696F21D003ECB0D /* RaisedButton.swift in Sources */,
 				C08D9A9A26929A1F00AB5525 /* ExerciseView.swift in Sources */,
 				C08D9A9826929A0C00AB5525 /* WelcomeView.swift in Sources */,
 				C07334192693186000226A94 /* SuccessView.swift in Sources */,
@@ -283,6 +298,7 @@
 				CD30C93F25147A8C0049DB93 /* DateExtension.swift in Sources */,
 				C00A4E4F26949A9F00D54164 /* MyVibrate.swift in Sources */,
 				CD30C924251474DC0049DB93 /* HIITFitApp.swift in Sources */,
+				C0A0D7E62696F52B003ECB0D /* TextExtension.swift in Sources */,
 				CD30C94025147A8C0049DB93 /* ImageExtension.swift in Sources */,
 				C07333E12692DDC100226A94 /* HistoryView.swift in Sources */,
 				C08D9A9D2692AA3700AB5525 /* HeaderView.swift in Sources */,
