@@ -40,15 +40,21 @@ struct ContentView: View {
 
     var body: some View {
         GeometryReader { geometry in
-            TabView(selection: $selectedTab) {
-                WelcomeView(selectedTab: $selectedTab)
-                    .tag(9)
-                
-                ForEach(0..<Exercise.exercises.count) { index in
-                    ExerciseView(selectedTab: $selectedTab, index: index)
-                        .tag(index)
+            // Color("background").ignoresSafeArea() // 이 방법 괜찮네.
+            // GradientBackground().ignoresSafeArea()
+            ZStack {
+                GradientBackground().ignoresSafeArea()
+                TabView(selection: $selectedTab) {
+                    WelcomeView(selectedTab: $selectedTab)
+                        .tag(9)
+                    
+                    ForEach(0..<Exercise.exercises.count) { index in
+                        ExerciseView(selectedTab: $selectedTab, index: index)
+                            .tag(index)
+                    }
                 }
             }
+            
             //.environmentObject(HistoryStore()) //! 객체 주입(비슷)
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
             .onAppear(perform: {
@@ -75,6 +81,11 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             ContentView()
+                .previewDevice("iPhone 11 Pro Max")
+                .environmentObject(ShareData())
+                .preferredColorScheme(.light)
+            ContentView()
+                .previewDevice("iPod touch (7th generation)")
                 .environmentObject(ShareData())
                 .preferredColorScheme(.light)
                 //.previewDevice("iPhone 11")

@@ -32,33 +32,66 @@
 
 import SwiftUI
 
+// MARK: - 커스텀 버튼
+
 struct RaisedButton: View {
+    let buttonText: String
+    var action: () -> Void
+    
     var body: some View {
-        Button(action: {}, label: {
-            Text("Get Started")
-                .raisedButtonTextStyle()
+        Button(action: {
+            action()
+        }, label: {
+            Text(buttonText).raisedButtonTextStyle()
         })
         .buttonStyle(RaisedButtonStyle())
+        //.buttonStyle(RaisedPrimitiveButtonStyle())
     }
 }
+
+// MARK: - 버튼 스타일들
 
 struct RaisedButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .padding(10)
-            .background(configuration.isPressed ? Color.yellow : Color.red)
-            .cornerRadius(30)
+            .frame(maxWidth: .infinity)
+            .padding([.top, .bottom], 12)
+            //.foregroundColor(configuration.isPressed ? Color.black : Color.yellow)
+            .background(Capsule()
+                            //.fill(configuration.isPressed ? Color.red : Color.blue)
+                            .foregroundColor(Color("background"))
+                            .shadow(color: Color("drop-shadow"), radius: 4, x: 6.0, y: 6.0)
+                            .shadow(color: Color("drop-highlight"), radius: 4, x: -6, y: -6)
+            )
     }
 }
+
+struct RaisedPrimitiveButtonStyle: PrimitiveButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding(10)
+            /*
+            .onLongPressGesture {
+                print("[onLongPressGesture]")
+                configuration.trigger()
+            }
+            */
+            .onTapGesture {
+                print("[onTapGesture]")
+                configuration.trigger()
+            }
+        }
+}
+
+// MARK: - 프리뷰
 
 struct RaisedButton_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            RaisedButton()
-                .padding(20)
-                .preferredColorScheme(.light)
-                //.background(Color("background"))
-                //.previewLayout(.sizeThatFits)
+            RaisedButton(buttonText: "Get Started") {
+                print("action!")
+            }
+            .preferredColorScheme(.light)
         }
     }
 }

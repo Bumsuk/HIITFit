@@ -30,60 +30,47 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import Combine
 import SwiftUI
 
-struct HeaderView: View {
-    @State var titleText: String
-    @Binding var selectedTab: Int
-
+struct ContainerView<Content: View>: View {
+    @State var show = false
+    var content: Content
     var body: some View {
-        VStack {
-            Text(titleText)
-                .font(.largeTitle)
-                .fontWeight(.black)
-                .foregroundColor(.white)
-                .lineLimit(1)
+        ZStack {
+            RoundedRectangle(cornerRadius: 25.0)
+                .foregroundColor(Color("background"))
 
-            HStack {
-                ForEach(0 ..< Exercise.exercises.count) { idx in
-                    ZStack {
-                        Circle()
-                            .frame(width: 32, height: 32)
-                            .foregroundColor(.white)
-                            .opacity(idx == selectedTab ? 0.5 : 0)
-                        Circle()
-                            .frame(width: 16, height: 16)
-                            .foregroundColor(.white)
-                    }
-                    .onTapGesture {
-                        selectedTab = idx
-                    }
-
-                    /*
-                    let fill = idx == selectedTab ? ".fill" : ""
-                    Image(systemName: "\(idx + 1).circle\(fill)")
-                        .onTapGesture {
-                            selectedTab = idx
-                        }
-                    */
-                }
+            // 하단 라운딩 가리는 용도
+            VStack {
+                Spacer()
+                Rectangle()
+                    .frame(height: 25)
+                    .foregroundColor(Color("background"))
             }
-            .font(.title)
+            content
         }
-        .foregroundColor(.white)        
-        .onAppear(perform: {})
+    }
+
+    init(@ViewBuilder content: @escaping () -> Content) {
+        self.content = content()
     }
 }
 
-struct HeaderView_Previews: PreviewProvider {
+struct ContainerView_Previews: PreviewProvider {
     static var previews: some View {
-        HeaderView(titleText: "Squat", selectedTab: .constant(1))
-            .previewLayout(.sizeThatFits)
-
-        HeaderView(titleText: "Squat", selectedTab: .constant(1))
-            .preferredColorScheme(.dark)
-            .environment(\.sizeCategory, .accessibilityLarge)
-            .previewLayout(.sizeThatFits)
+        ContainerView {
+            VStack(alignment: .center, spacing: nil, content: {
+                RaisedButton(buttonText: "Hello World") {
+                }
+                .padding(50)
+                
+                Button("Tap me!") {
+                }
+                .buttonStyle(EmbossedButtonStyle(buttonShape: .round))
+            })
+            .padding(50)
+        }
+        .preferredColorScheme(.light)
+        .previewLayout(.sizeThatFits)
     }
 }

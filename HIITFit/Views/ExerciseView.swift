@@ -39,10 +39,26 @@ struct ExerciseView: View {
     @State private var showSuccess = false
     @State private var timerDone = false
     @State private var showTimer = false
-    
     @Binding var selectedTab: Int
-
     let index: Int
+
+    var startExerciseButton: some View {
+        RaisedButton(buttonText: "Start Exercise") {
+            showTimer.toggle()
+        }
+    }
+
+    var historyButton: some View {
+        Button(action: {
+            showHistory = true
+        }, label: {
+            Text("History")
+                .fontWeight(.bold)
+                .padding([.leading, .trailing], 5)
+        })
+            .padding(.bottom, 10)
+            .buttonStyle(EmbossedButtonStyle())
+    }
 
     var body: some View {
         GeometryReader { geometry in
@@ -50,61 +66,65 @@ struct ExerciseView: View {
                 HeaderView(titleText: Exercise.exercises[index].exerciseName, selectedTab: $selectedTab)
                     .padding([.all], 20)
 
-                VStack {
-                    if let url = Bundle.main.url(forResource: Exercise.exercises[index].videoName, withExtension: "mp4") {
-                        VideoPlayer(player: AVPlayer(url: url))
-                    } else {
-                        Text("\(Exercise.exercises[index].videoName)파일을 찾을수 없음!")
-                            .fontWeight(.bold)
-                            .foregroundColor(.red)
-                    }
-                }
-                .frame(width: geometry.size.width,
-                       height: geometry.size.height * 0.45,
-                       alignment: .center)
-                
-                HStack(spacing: 150) {
-                    Button("Start Exercise") {
-                        timerDone = false
-                        showTimer.toggle()
-                    }
-                    
-                    Button("Done") {
-                        history.addDoneExercise(Exercise.exercises[index].exerciseName)
-                        
-                        timerDone = false
-                        showTimer.toggle()
-                        
-                        if lastExercise {
-                            showSuccess.toggle()
-                        } else {
-                            selectedTab += 1
+                ContainerView {
+                    VStack {
+                        VStack {
+                            if let url = Bundle.main.url(forResource: Exercise.exercises[index].videoName, withExtension: "mp4") {
+                                VideoPlayer(player: AVPlayer(url: url))
+                                    .cornerRadius(20)
+                            } else {
+                                Text("\(Exercise.exercises[index].videoName)파일을 찾을수 없음!")
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.red)
+                            }
                         }
+                        .frame(width: geometry.size.width * 0.9,
+                               height: geometry.size.height * 0.25,
+                               alignment: .top)
+                        .padding()
+
+                        // Spacer()
+
+                        HStack(spacing: 150) {
+                            startExerciseButton
+
+                            Button("Done") {
+                                history.addDoneExercise(Exercise.exercises[index].exerciseName)
+
+                                timerDone = false
+                                showTimer.toggle()
+
+                                if lastExercise {
+                                    showSuccess.toggle()
+                                } else {
+                                    selectedTab += 1
+                                }
+                            }
+                            .disabled(!timerDone)
+                            .sheet(isPresented: $showSuccess, content: {
+                                SuccessView(selectedTab: $selectedTab)
+                            })
+                        }
+                        .font(.headline)
+                        .padding()
+
+                        if showTimer {
+                            TimerView(timerDone: $timerDone)
+                        }
+
+
+                        RatingView(exerciseIndex: index)
+                            .padding()
+
+                        Spacer()
+                        
+                        historyButton
+                            .sheet(isPresented: $showHistory) {
+                                HistoryView()
+                            }
+                            .padding(.bottom)
                     }
-                    .disabled(!timerDone)
-                    .sheet(isPresented: $showSuccess, content: {
-                        SuccessView(selectedTab: $selectedTab)
-                    })
                 }
-                .font(.headline)
-                .padding()
-                
-                if showTimer {
-                    TimerView(timerDone: $timerDone)
-                }
-                
-                Spacer()
-                
-                RatingView(exerciseIndex: index)
-                    .padding()
-                                
-                Button("History") {
-                    showHistory.toggle()
-                }
-                .sheet(isPresented: $showHistory) {
-                    HistoryView()
-                }
-                .padding(.bottom)
             }
         }
     }

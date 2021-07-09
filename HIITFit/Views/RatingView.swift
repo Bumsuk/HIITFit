@@ -38,29 +38,31 @@ struct RatingView: View {
 
     let exerciseIndex: Int
     let maximumRating = 5
-    
+
     let onColor = Color.red
     let offColor = Color.gray
-        
+
     var body: some View {
         HStack {
             ForEach(1 ..< maximumRating + 1) { idx in
-                Image(systemName: "waveform.path.ecg")
-                    .foregroundColor(idx > rating ? offColor : onColor )
-                    .font(.largeTitle)
-                    .onTapGesture {
-                        updateRating(index: idx)
-                    }
-                    .onChange(of: ratings, perform: { _ in
-                        convertRating()
-                    })
+                Button(action: {
+                    updateRating(index: idx)
+                }, label: {
+                    Image(systemName: "waveform.path.ecg")
+                        .foregroundColor(idx > rating ? offColor : onColor)
+                        .font(.body)
+                })
+                .buttonStyle(EmbossedButtonStyle(buttonShape: .round))
+                .onAppear(perform: {
+                    convertRating()
+                })
+                .onChange(of: ratings, perform: { _ in
+                    convertRating()
+                })
             }
         }
-        .onAppear(perform: {
-            convertRating()
-        })
     }
-    
+
     init(exerciseIndex: Int) {
         self.exerciseIndex = exerciseIndex
         let desiredLenght = Exercise.exercises.count
@@ -68,7 +70,7 @@ struct RatingView: View {
             ratings = ratings.padding(toLength: desiredLenght, withPad: "0", startingAt: 0)
         }
     }
-    
+
     fileprivate func convertRating() {
         let index = ratings.index(ratings.startIndex, offsetBy: exerciseIndex)
         let character = ratings[index]
@@ -78,16 +80,15 @@ struct RatingView: View {
     fileprivate func updateRating(index: Int) {
         rating = index
         let index = ratings.index(ratings.startIndex, offsetBy: exerciseIndex)
-        ratings.replaceSubrange(index...index, with: String(rating))
+        ratings.replaceSubrange(index ... index, with: String(rating))
     }
-
 }
 
 struct RatingView_Previews: PreviewProvider {
     @AppStorage("ratings") static var ratings: String?
     static var previews: some View {
         ratings = nil
-        return RatingView(exerciseIndex: 0)
+        return RatingView(exerciseIndex: 1)
             .previewLayout(.sizeThatFits)
     }
 }

@@ -37,55 +37,67 @@ struct WelcomeView: View {
     @EnvironmentObject var share: ShareData
     @State var showHistory = false
     @Binding var selectedTab: Int
-
+    
+    var historyButton: some View {
+        Button(action: {
+            showHistory = true
+        }, label: {
+            Text("History")
+                .fontWeight(.bold)
+                .padding([.leading, .trailing], 5)
+        })
+        .padding(.bottom, 10)
+        .buttonStyle(EmbossedButtonStyle(buttonShape: .capsule))
+    }
+    
     var body: some View {
-        ZStack {
+        GeometryReader { geo in
+            
             VStack {
-                HeaderView(titleText: NSLocalizedString("Welcome", comment: "greeting"), selectedTab: $selectedTab)
-                    .padding([.all], 20)
-                
+                HeaderView(titleText: NSLocalizedString("Welcome", comment: "greeting"),
+                           selectedTab: $selectedTab)
+
                 Spacer()
                 
-                Button("History") {
-                    self.showHistory.toggle()
-                }
-                .sheet(isPresented: $showHistory, onDismiss: {
-                    print("onDismiss 호출!!")
-                }, content: {
-                    HistoryView()
-                })
-                //.frame(width: 400, height: 400, alignment: .bottom)
-                .padding(.bottom)
-            }
-
-            VStack {
-                HStack(alignment: .bottom) {
-                    VStack(alignment: .leading) {
-                        Text(NSLocalizedString("Get Fit", comment: "")).font(.largeTitle)
-                        Text("with high intensity interval training").font(.headline)
+                ContainerView {
+                    VStack {
+                        VStack {
+                            WelcomeView.images
+                            WelcomeView.welcomeText
+                            getStartButton()
+                            Spacer()
+                            historyButton.padding(.bottom, 10)
+                        }
                     }
-                    Image("step-up")
-                        .resizedToFill(width: 140, height: 140)
-                        .clipShape(Circle())
+                    .sheet(isPresented: $showHistory, content: {
+                        HistoryView()
+                    })
                 }
-                .padding([.leading, .trailing], 20)
-
-                Button(action: {
-                    selectedTab = 0
-                }, label: {
-                    Text(NSLocalizedString("Get Started", comment: ""))
-                    Image(systemName: "arrow.right.circle")
-                })
-                .padding()
+                .frame(height: geo.size.height * 0.8)
             }
+            //.ignoresSafeArea(.container, edges: .bottom)
         }
+    }
+    
+    fileprivate func getStartButton() -> some View {
+        RaisedButton(buttonText: NSLocalizedString("Get Started", comment: "")) {
+            selectedTab = 0
+        }
+        .padding()
     }
 }
 
 struct WelcomeView_Previews: PreviewProvider {
     static var previews: some View {
-        WelcomeView(selectedTab: .constant(1))
-            .environmentObject(ShareData())
+        Group {
+            WelcomeView(selectedTab: .constant(1))
+                .preferredColorScheme(.light)
+                .environmentObject(ShareData())
+            WelcomeView(selectedTab: .constant(1))
+                .previewDevice("iPod touch (7th generation)")
+                .preferredColorScheme(.light)
+                .environmentObject(ShareData())
+        }
             //.preferredColorScheme(.dark)
 
         // .previewDevice("iPad Pro (11-inch) (3rd generation)")
