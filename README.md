@@ -1,4 +1,4 @@
 # HIITFit
-SwiftUI 1st APP
+SwiftUI First APP
 
 SwiftUI 잼있다! 🤡
